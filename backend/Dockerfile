@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o api ./cmd/main.go
+RUN go build -o api ./main.go
 
 # Minimal runtime image
 FROM alpine:latest
