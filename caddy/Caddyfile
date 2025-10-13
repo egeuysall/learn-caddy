@@ -1,0 +1,68 @@
+# Global options
+{
+    # Email for Let's Encrypt notifications (cert expiry warnings)
+    email hi@egeuysal.com
+}
+
+# Your API domain
+blogapi.egeuysal.com {
+    # Reverse proxy to Go API
+    reverse_proxy localhost:8080 {
+        # Health check - Caddy will stop sending traffic if backend is down
+        health_uri /health
+        health_interval 10s
+        health_timeout 5s
+
+        # Load balancing (if you scale to multiple instances later)
+        lb_policy round_robin
+
+        # Timeouts
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 30s
+        }
+    }
+
+    # Security headers
+    header {
+        # Prevent MIME sniffing
+        X-Content-Type-Options "nosniff"
+
+        # Prevent clickjacking
+        X-Frame-Options "DENY"
+
+        # XSS protection
+        X-XSS-Protection "1; mode=block"
+
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+
+        # Force HTTPS for 2 years (aggressive for SaaS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+        # Remove server identification (hide that you're using Caddy)
+        -Server
+
+        # Content Security Policy (adjust based on your needs)
+        Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
+    }
+
+    # Request body size limit
+    request_body {
+        max_size 10MB
+    }
+
+    # Compression (save bandwidth)
+    encode gzip
+
+    # Logging (rotate logs automatically)
+    log {
+        output file /var/log/caddy/api-access.log {
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+        format json
+        level INFO
+    }
+}
