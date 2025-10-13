@@ -5,7 +5,7 @@
 }
 
 # Your API domain
-blogapi.egeuysal.com {
+server.egeuysal.com {
     # Reverse proxy to Go API
     reverse_proxy localhost:8080 {
         # Health check - Caddy will stop sending traffic if backend is down
