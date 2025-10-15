@@ -31,8 +31,5 @@ WORKDIR /app
 # Copy binary from builder
 COPY --from=builder /app/api .
 
-# Add a healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD wget -qO- http://localhost:8080/health || exit 1
-
 # Run the binary
 CMD ["./api"]
